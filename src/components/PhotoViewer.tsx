@@ -4,22 +4,22 @@ import { Photo } from '../types/photo'
 import { formatFileSize, formatDateTime } from '../utils/format'
 
 interface PhotoViewerProps {
-  photoId: string
+  photo: Photo
   photos: Photo[]
   onClose: () => void
   onNext: () => void
   onPrevious: () => void
+  onToggleFavorite: (photoId: string) => void
 }
 
-export function PhotoViewer({ photoId, photos, onClose, onNext, onPrevious }: PhotoViewerProps) {
+export function PhotoViewer({ photo, photos, onClose, onNext, onPrevious, onToggleFavorite }: PhotoViewerProps) {
   const [showInfo, setShowInfo] = useState(false)
   const [zoom, setZoom] = useState(1)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
-  const photo = photos.find(p => p.id === photoId)
-  const currentIndex = photos.findIndex(p => p.id === photoId)
+  const currentIndex = photos.findIndex(p => p.id === photo.id)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,7 +48,7 @@ export function PhotoViewer({ photoId, photos, onClose, onNext, onPrevious }: Ph
   useEffect(() => {
     setZoom(1)
     setPosition({ x: 0, y: 0 })
-  }, [photoId])
+  }, [photo.id])
 
   if (!photo) return null
 
@@ -272,6 +272,7 @@ export function PhotoViewer({ photoId, photos, onClose, onNext, onPrevious }: Ph
 
             <div className="pt-4 border-t border-white/20">
               <button
+                onClick={() => onToggleFavorite(photo.id)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
                   photo.isFavorite 
                     ? 'bg-red-500 text-white' 
